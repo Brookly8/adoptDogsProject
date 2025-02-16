@@ -1,7 +1,8 @@
 "use client";
-import axios from "axios";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
+import { LogIn } from "../lib/loginApi";
+import Image from "next/image";
 
 export default function Login() {
   const [user, setUser] = useState<{ name: string; email: string }>({
@@ -11,24 +12,6 @@ export default function Login() {
 
   const router = useRouter();
 
-  const LogIn = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    try {
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/auth/login`,
-        { name: user.name, email: user.email },
-        { withCredentials: true }
-      );
-      if (response.status === 200) {
-        console.log("Login successful!", response);
-        router.push("/main");
-      }
-    } catch (error) {
-      console.error("Login Error", error);
-      alert("Login Failed");
-    }
-  };
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setUser((prev) => ({
       ...prev,
@@ -39,30 +22,40 @@ export default function Login() {
   return (
     <div className="flex justify-center items-center h-[100vh]">
       <form
-        className="bg-slate-400 min-w-[400px] min-h-[300px] flex flex-col items-center justify-center gap-14 rounded border-[1px] border-black"
-        onSubmit={LogIn}
+        className="bg-black min-w-[90%] md:min-w-[400px] min-h-[300px] flex flex-col items-center
+         justify-center gap-14 rounded border-[3px] border-white p-5"
+        onSubmit={(e) => LogIn(e, user, router)}
         action=""
       >
-        <div className="flex flex-col gap-5">
-        <input
-          className="p-1 rounded"
-          onChange={handleChange}
-          value={user.name}
-          name="name"
-          type="text"
-          placeholder="name"
+        <Image
+          className="mt-5"
+          src={"/favicon.png"}
+          alt="logo"
+          width={100}
+          height={100}
         />
-        <input
-          className="p-1 rounded"
-          type="email"
-          name="email"
-          value={user.email}
-          placeholder="email"
-          onChange={handleChange}
-        />
+        <p className="text-white text-3xl">LOG IN</p>
+        <div className="flex flex-col gap-10">
+          <input
+            className="p-1 rounded"
+            onChange={handleChange}
+            value={user.name}
+            name="name"
+            type="text"
+            placeholder="name"
+          />
+          <input
+            className="p-1 rounded"
+            type="email"
+            name="email"
+            value={user.email}
+            placeholder="email"
+            onChange={handleChange}
+          />
         </div>
         <button
-          className="bg-slate-700 px-2 py-1 rounded text-slate-200 font-semibold hover:bg-slate-600"
+          className="bg-black border-[1px] border-white px-2 py-1
+           rounded text-slate-200 font-semibold hover:bg-slate-600 w-[30%] mb-3"
           type="submit"
         >
           Submit

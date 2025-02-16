@@ -53,3 +53,14 @@ export const fetchDogBreeds = async () => {
     return [];
   }
 };
+
+export const fetchMath = async (dogsIds: string[]) => {
+  try {
+    const response = await axios.post(`${API_URL}/dogs/match`, dogsIds, {
+      withCredentials: true,
+    });
+    return response;
+  } catch (error) {
+    console.error("Failed to load math", error);
+  }
+};
