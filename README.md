@@ -5,7 +5,10 @@ First, create .env file in the root directory, and add BASE URL:
 NEXT_PUBLIC_BASE_URL=https://frontend-take-home-service.fetch.com
 ```
 
-Then, run the development server:
+Then, install all dependencies and run the development server:
+```bash
+npm install
+```
 
 ```bash
 npm run dev
