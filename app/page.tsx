@@ -1,13 +1,14 @@
 "use client";
 import { deleteBreed, showMatchedDog, toHome } from "./lib/utils";
 import DogCard from "./components/DogCard";
-import MatchedDog from "./components/MatchedDog";
 import useDogs from "./hooks/useDogs";
 import Container from "./components/Container";
+import useMap from "./hooks/useMap";
+import GoogleMapContainer from "./components/GoogleMapContainer";
+import { useRouter } from "next/navigation";
 
 export default function Main() {
   const {
-    body,
     dogs,
     favorites,
     order,
@@ -18,6 +19,7 @@ export default function Main() {
     from,
     total,
     currentPage,
+    setZipCodes,
     setBody,
     setOrder,
     getDogIds,
@@ -26,6 +28,18 @@ export default function Main() {
     loadNextPage,
     loadPrevPage,
   } = useDogs();
+
+  const {
+    setIsMapOpened,
+    isMapOpened,
+    setLocation,
+    getLocation,
+    location,
+    coordinates,
+    setCoordinates,
+  } = useMap(getDogIds, setZipCodes, selectedBreeds, order);
+
+  const router = useRouter();
 
   return (
     <Container>
@@ -56,13 +70,10 @@ export default function Main() {
 
             <div className="mt-4 md:mt-0">
               <button
-                onClick={() => showMatchedDog(favorites, setBody)}
-                className={`bg-yellow-500 text-black px-4 py-2 rounded font-semibold
-                 hover:bg-yellow-400 transition duration-300 ${
-                   favorites.length < 1 && "hidden"
-                 }`}
+                className="bg-yellow-500 text-black px-4 py-2 rounded font-semibold hover:bg-yellow-400 transition duration-300"
+                onClick={() => setIsMapOpened((prev) => !prev)}
               >
-                Show Matched Dog
+                Find by location
               </button>
             </div>
           </div>
@@ -96,41 +107,70 @@ export default function Main() {
             ))}
         </div>
 
-        <form
-          action=""
-          className="flex flex-wrap flex-col justify-center gap-4 items-end mt-4 md:mt-0"
-          onSubmit={(e) => getDogIds(selectedBreeds, undefined, e)}
-        >
-          <select
-            onChange={(e) => {
-              setSelectedBreeds((prev) =>
-                !prev.includes(e.target.value)
-                  ? [...selectedBreeds, e.target.value]
-                  : [...selectedBreeds]
-              );
-            }}
-            className="bg-white text-black border border-gold px-3 py-2 rounded"
-          >
-            {breeds.map((breed) => (
-              <option key={breed} value={breed}>
-                {breed}
-              </option>
-            ))}
-          </select>
-
+        <div className="flex flex-wrap flex-col justify-center gap-4 items-end mt-4 md:mt-0">
           <button
             className="bg-yellow-500 text-black px-4 py-2 rounded font-semibold hover:bg-yellow-400 transition duration-300"
-            type="submit"
+            onClick={() => router.push("/login")}
           >
-            Find
-          </button>
-        </form>
+            Login
+          </button>{" "}
+          <form
+            action=""
+            className="flex flex-wrap flex-col justify-center gap-4 items-end mt-4 md:mt-0"
+            onSubmit={(e) => getDogIds(selectedBreeds, undefined, e)}
+          >
+            <select
+              onChange={(e) => {
+                setSelectedBreeds((prev) =>
+                  !prev.includes(e.target.value)
+                    ? [...selectedBreeds, e.target.value]
+                    : [...selectedBreeds]
+                );
+              }}
+              className="bg-white text-black border border-gold px-3 py-2 rounded"
+            >
+              {breeds.map((breed) => (
+                <option key={breed} value={breed}>
+                  {breed}
+                </option>
+              ))}
+            </select>
+
+            <button
+              className="bg-yellow-500 text-black px-4 py-2 rounded font-semibold hover:bg-yellow-400 transition duration-300"
+              type="submit"
+            >
+              Find
+            </button>
+          </form>
+        </div>
       </div>
+
+      <div className="mt-4 md:mt-5 text-center">
+        <button
+          onClick={() => showMatchedDog(favorites, setBody)}
+          className={`bg-yellow-500 text-black px-4 py-2 rounded font-semibold
+                 hover:bg-yellow-400 transition duration-300 ${
+                   favorites.length < 1 && "hidden"
+                 }`}
+        >
+          Show Matched Dog
+        </button>
+      </div>
+
+      <GoogleMapContainer
+        isMapOpened={isMapOpened}
+        setLocation={setLocation}
+        getLocation={getLocation}
+        location={location}
+        coordinates={coordinates}
+        setCoordinates={setCoordinates}
+      />
 
       {error && <p className="text-red-600 text-center mt-4">{error}</p>}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 mt-6">
-        {dogs.length > 1
+        {dogs[0].name !== ""
           ? dogs.map((dog) => (
               <DogCard
                 key={dog.id}
@@ -139,18 +179,7 @@ export default function Main() {
                 toggleFavorite={toggleFavorite}
               />
             ))
-          : body.length === 1 && (
-              <div className="w-[94vw] flex justify-center">
-                <div className="mt-5 p-6 bg-gold text-center rounded shadow-lg bg-green-400 text-white w-[70%] md:w-[40%] lg:w-[25%]">
-                  <h2 className="text-xl font-bold mb-4">
-                    🎉 You matched with this dog! 🎉
-                  </h2>
-                  {dogs.map((dog, index) => (
-                    <MatchedDog key={index} dog={dog} />
-                  ))}
-                </div>
-              </div>
-            )}
+          : ""}
       </div>
 
       <div className="flex justify-center mt-6 items-center gap-6">

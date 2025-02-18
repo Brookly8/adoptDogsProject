@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { fetchDogIds, fetchDogs, fetchDogBreeds } from "../lib/dogsApi";
-import { useRouter } from "next/navigation";
+import { scrollToTop } from "../lib/utils";
 
 export default function useDogs() {
   const [body, setBody] = useState<string[]>([]);
@@ -12,17 +12,18 @@ export default function useDogs() {
   const [from, setFrom] = useState(0);
   const [total, setTotal] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
+  const [zipCodes, setZipCodes] = useState<string[]>();
   const [dogs, setDogs] = useState([
     { name: "", zip_code: "", img: "", age: "", breed: "", id: "" },
   ]);
 
-  const router = useRouter();
   const pageSize = 25;
 
   const getDogIds = async (
     breads: string[] = [],
     order?: string,
-    e?: React.FormEvent<HTMLFormElement>
+    e?: React.FormEvent<HTMLFormElement>,
+    zip_codes?: string[]
   ) => {
     e?.preventDefault();
     try {
@@ -30,8 +31,10 @@ export default function useDogs() {
         breads ? breads : selectedBreeds,
         undefined,
         undefined,
-        order
+        order,
+        zip_codes
       );
+
       if (resultIds.length > 0) {
         setBody(resultIds);
         setFrom(0);
@@ -39,7 +42,6 @@ export default function useDogs() {
         setCurrentPage(1);
       } else {
         setError("No dog IDs found");
-        router.push("/login");
       }
     } catch (error) {
       setError("Failed to fetch dog IDs");
@@ -71,7 +73,7 @@ export default function useDogs() {
   }, [body]);
 
   useEffect(() => {
-    getDogIds(selectedBreeds, order);
+    getDogIds(selectedBreeds, order, undefined, zipCodes);
   }, [order]);
 
   const searchDogs = async (ids: string[]) => {
@@ -92,11 +94,18 @@ export default function useDogs() {
     const newFrom = from + pageSize;
     if (newFrom < total) {
       try {
-        const { resultIds } = await fetchDogIds(selectedBreeds, newFrom);
+        const { resultIds } = await fetchDogIds(
+          selectedBreeds,
+          newFrom,
+          undefined,
+          order,
+          zipCodes
+        );
         if (resultIds.length > 0) {
           setBody(resultIds);
           setFrom(newFrom);
           setCurrentPage((prev) => prev + 1);
+          scrollToTop();
         } else {
           setError("No more dogs available.");
         }
@@ -110,11 +119,18 @@ export default function useDogs() {
     if (from > 0) {
       const newFrom = Math.max(from - pageSize, 0);
       try {
-        const { resultIds } = await fetchDogIds(selectedBreeds, newFrom);
+        const { resultIds } = await fetchDogIds(
+          selectedBreeds,
+          newFrom,
+          undefined,
+          order,
+          zipCodes
+        );
         if (resultIds.length > 0) {
           setBody(resultIds);
           setFrom(newFrom);
           setCurrentPage((prev) => prev - 1);
+          scrollToTop();
         } else {
           setError("No previous page available.");
         }
@@ -144,6 +160,8 @@ export default function useDogs() {
     total,
     currentPage,
     pageSize,
+    zipCodes,
+    setZipCodes,
     setSelectedBreeds,
     getDogIds,
     toggleFavorite,

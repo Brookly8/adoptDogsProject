@@ -25,18 +25,25 @@ export default function DogCard({
         alt="DogPicture"
         className="w-[90%] h-[60%]  rounded"
       />
-      <div className="flex gap-6">
-        <div className="flex flex-col items-end">
-          <p>Age:</p>
-          <p>Breed:</p>
-          <p>Name:</p>
-          <p>Zip:</p>
-        </div>
-        <div className="flex flex-col items-start">
-          <p className="font-semibold">{dog.age}</p>
-          <p className="font-semibold">{dog.breed}</p>
-          <p className="font-semibold">{dog.name}</p>
-          <p className="font-semibold">{dog.zip_code}</p>
+      <div className="w-[90%]">
+        <div className="">
+          <div className="font-semibold flex justify-between w-[100%]">
+            {" "}
+            <p>Age:</p>
+            <p>{dog.age}</p>
+          </div>
+          <div className="font-semibold flex justify-between w-[100%]">
+            <p>Breed:</p>
+            <p>{dog.breed}</p>
+          </div>
+          <div className="font-semibold flex justify-between w-[100%]">
+            <p>Name:</p>
+            <p>{dog.name}</p>
+          </div>
+          <div className="font-semibold flex justify-between w-[100%]">
+            <p>Zip:</p>
+            <p>{dog.zip_code}</p>
+          </div>
         </div>
       </div>
       <button
