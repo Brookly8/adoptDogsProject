@@ -12,7 +12,7 @@ export default function useDogs() {
   const [from, setFrom] = useState(0);
   const [total, setTotal] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
-  const [zipCodes, setZipCodes] = useState<string[]>();
+  const [zipCodes, setZipCodes] = useState<string[] | undefined>();
   const [dogs, setDogs] = useState([
     { name: "", zip_code: "", img: "", age: "", breed: "", id: "" },
   ]);
@@ -44,7 +44,7 @@ export default function useDogs() {
         setError("No dog IDs found");
       }
     } catch (error) {
-      setError("Failed to fetch dog IDs");
+      setError("Failed to fetch dog IDs" + error);
     }
   };
 
@@ -58,7 +58,7 @@ export default function useDogs() {
           setError("No dogs breeds found");
         }
       } catch (error) {
-        setError("Failed to fetch dogs breeds");
+        setError("Failed to fetch dogs breeds" + error);
       }
     };
 
@@ -85,8 +85,8 @@ export default function useDogs() {
         setDogs(dogData);
         setError(null);
       }
-    } catch (err) {
-      setError("Failed to fetch dogs.");
+    } catch (error) {
+      setError("Failed to fetch dogs." + error);
     }
   };
 
@@ -109,8 +109,8 @@ export default function useDogs() {
         } else {
           setError("No more dogs available.");
         }
-      } catch (err) {
-        setError("Failed to load more dogs.");
+      } catch (error) {
+        setError("Failed to load more dogs." + error);
       }
     }
   };
@@ -134,8 +134,8 @@ export default function useDogs() {
         } else {
           setError("No previous page available.");
         }
-      } catch (err) {
-        setError("Failed to load previous page.");
+      } catch (error) {
+        setError("Failed to load previous page." + error);
       }
     }
   };

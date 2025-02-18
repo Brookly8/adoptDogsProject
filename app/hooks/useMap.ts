@@ -2,8 +2,13 @@ import { useState } from "react";
 import { fetchLocations } from "../lib/dogsApi";
 
 export default function useMap(
-  getDogIds: Function,
-  setZipCodes: Function,
+  getDogIds: (
+    breads: string[],
+    order?: string,
+    e?: React.FormEvent<HTMLFormElement>,
+    zip_codes?: string[]
+  ) => void,
+  setZipCodes: React.Dispatch<React.SetStateAction<string[] | undefined>>,
   selectedBreeds: string[],
   order: string
 ) {

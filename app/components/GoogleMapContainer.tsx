@@ -1,6 +1,5 @@
 import React from "react";
 import GoogleMapComponent from "./GoogleMapComponent";
-import useMap from "../hooks/useMap";
 
 export default function GoogleMapContainer({
   setLocation,

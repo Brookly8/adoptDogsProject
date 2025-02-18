@@ -4,7 +4,12 @@ export const deleteBreed = (
   index: number,
   selectedBreeds: string[],
   setSelectedBreeds: React.Dispatch<React.SetStateAction<string[]>>,
-  getDogIds: Function,
+  getDogIds: (
+    breads: string[],
+    order?: string,
+    e?: React.FormEvent<HTMLFormElement>,
+    zip_codes?: string[]
+  ) => void,
   order: string
 ) => {
   const filteredSelectedBreeds = selectedBreeds.filter(
@@ -23,12 +28,17 @@ export const showMatchedDog = async (
     const response = await fetchMath(favorites);
     setBody([response?.data.match]);
   } catch (error) {
-    console.error("failed to load match");
+    console.error("failed to load match" + error);
   }
 };
 
 export const toHome = (
-  getDogIds: Function,
+  getDogIds: (
+    breads: string[] | undefined,
+    order?: string,
+    e?: React.FormEvent<HTMLFormElement>,
+    zip_codes?: string[]
+  ) => void,
   setSelectedBreeds: React.Dispatch<React.SetStateAction<string[]>>,
   order: string
 ) => {

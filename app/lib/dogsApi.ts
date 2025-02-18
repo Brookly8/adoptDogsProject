@@ -15,7 +15,17 @@ export const fetchDogIds = async (
   zip_codes?: string[]
 ) => {
   try {
-    const params: Record<string, any> = { sort: `breed:${order}`, size, from };
+    const params: {
+      sort: string;
+      size: number;
+      from: number;
+      breeds?: string[];
+      zipCodes?: string[];
+    } = {
+      sort: `breed:${order}`,
+      size,
+      from,
+    };
 
     if (breeds) {
       params.breeds = breeds;
